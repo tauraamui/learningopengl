@@ -1,82 +1,109 @@
 package utils
 
-import org.lwjgl.BufferUtils
-import java.awt.image.BufferedImage
-import java.io.File
-import java.io.IOException
-import javax.imageio.ImageIO
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL13
+import org.lwjgl.opengl.GL15
 import org.lwjgl.stb.STBImage
-import sun.nio.ch.IOUtil
-import java.nio.ByteBuffer
-import java.nio.channels.Channels
-import java.nio.channels.SeekableByteChannel
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+
+import org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
+import org.lwjgl.stb.STBImage.*;
 
 /**
- * Created by tauraaamui on 22/08/2016.
+ * This class represents a texture.
+ *
+ * @author Heiko Brumme
  */
-class Texture {
+public class Texture {
 
-    var id = -1
-    var width = 0
-    var height = 0
+    /**
+     * Stores the handle of the texture.
+     */
+    private var id = 0
 
-    constructor(file: File) {
+    /**
+     * Width of the texture.
+     */
+    private var width = 0
+    /**
+     * Height of the texture.
+     */
+    private var height = 0
 
-        val imageBuffer = ioResourceToByteBuffer(file.absolutePath, 8 * 1024)
-        
+    /**
+     * Creates a texture with specified width, height and data.
+     *
+     * @param width  Width of the texture
+     * @param height Height of the texture
+     * @param data   Picture Data in RGBA format
+     */
 
-        var bufferedImage: BufferedImage? = null
-        try {
-            bufferedImage = ImageIO.read(file)
-            width = bufferedImage.width
-            height = bufferedImage.height
+    constructor(width: Int, height: Int, data: ByteBuffer) {
+        id = GL11.glGenTextures()
+        this.width = width
+        this.height = height
 
-            val pixelsRaw = bufferedImage.getRGB(0, 0, width, height, null, 0, width)
-            val pixels = BufferUtils.createByteBuffer(width * height * 4)
+        glBindTexture(GL_TEXTURE_2D, id)
 
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
     }
 
-    private fun resizeBuffer(buffer: ByteBuffer, newCapacity: Int): ByteBuffer {
-        val newBuffer = BufferUtils.createByteBuffer(newCapacity)
-        buffer.flip()
-        newBuffer.put(buffer)
-        return newBuffer
-    }
+    /**
+     * Binds the texture.
+     */
 
-    @Throws(IOException::class)
-    fun ioResourceToByteBuffer(resource: String, bufferSize: Int): ByteBuffer {
-        var buffer: ByteBuffer? = null
+    fun bind() {GL11.glBindTexture(GL11.GL_TEXTURE_2D, id)}
 
-        val path = Paths.get(resource)
-        if (Files.isReadable(path)) {
-            val fc = Files.newByteChannel(path)
-            buffer = BufferUtils.createByteBuffer(fc.size().toInt() + 1)
-            while (fc.read(buffer) != -1) {
-                println(fc.position())
-            }
-        } else {
-            try {
-                val source = Texture::class.java.getResourceAsStream(resource)
-                val rbc = Channels.newChannel(source)
-                buffer = BufferUtils.createByteBuffer(bufferSize)
+    /**
+     * Delete the texture.
+     */
+    fun delete() {GL11.glDeleteTextures(id)}
 
-                while (true) {
-                    val bytes = rbc.read(buffer)
-                    if (bytes == -1) break
-                    if (buffer?.remaining() == 0)
-                        buffer = resizeBuffer(buffer!!, buffer.capacity() * 2)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    /**
+     * Gets the texture width.
+     *
+     * @return Texture width
+     */
+    fun getWidth(): Int {return width}
+
+    /**
+     * Gets the texture height.
+     *
+     * @return Texture height
+     */
+    fun getHeight(): Int {return height}
+
+    /**
+     * Load texture from file.
+     *
+     * @param path File path of the texture
+     *
+     * @return Texture from specified file
+     */
+
+    companion object {
+        fun loadTexture(path: String): Texture {
+            val w = BufferUtils.createIntBuffer(1)
+            val h = BufferUtils.createIntBuffer(1)
+            val comp = BufferUtils.createIntBuffer(1)
+
+            stbi_set_flip_vertically_on_load(1)
+            val image = stbi_load(path, w, h, comp, 4)
+
+            if (image == null) throw RuntimeException("Failed to load texture from file: $path \n ${stbi_failure_reason()}")
+
+            val width = w.get()
+            val height = h.get()
+
+            return Texture(width, height, image)
         }
-        buffer?.flip()
-        return buffer!!
     }
 }

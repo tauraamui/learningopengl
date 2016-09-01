@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import utils.Texture
-import utils.TextureLoader
 import java.io.File
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
