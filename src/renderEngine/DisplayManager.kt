@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.glfw.GLFWVidMode
 import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL11
 
 /**
  * Created by tauraaamui on 22/08/2016.
@@ -26,8 +27,10 @@ class DisplayManager {
 
             GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE)
             GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3)
-            GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3)
+            GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2)
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
+            // for compatibility with Mac OS X
+            GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE)
             rootWindowID = GLFW.glfwCreateWindow(WIDTH, HEIGHT, "Test", 0, 0)
 
             if (rootWindowID == 0L) throw RuntimeException("Failed to create window")

@@ -69,7 +69,7 @@ abstract class ShaderProgram {
         if (glGetProgrami(programID, GL_LINK_STATUS) == 0) throw Exception("Error linking shader code: " + glGetShaderInfoLog(programID, 1024))
 
         glValidateProgram(programID)
-        if (glGetProgrami(programID, GL_VALIDATE_STATUS) == 0) throw Exception("Warning validating Shader code: " + glGetShaderInfoLog(programID, 1024))
+        //if (glGetProgrami(programID, GL_VALIDATE_STATUS) == 0) throw Exception("Warning validating Shader code: " + glGetShaderInfoLog(programID, 1024))
     }
 
     fun bind() {
