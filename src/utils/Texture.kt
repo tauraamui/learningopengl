@@ -81,6 +81,8 @@ public class Texture {
      */
     fun getHeight(): Int {return height}
 
+    fun getID(): Int {return id}
+
     /**
      * Load texture from file.
      *

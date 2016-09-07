@@ -30,9 +30,9 @@ class Loader {
     }
 
     fun loadTexture(fileName: String): Int {
-        val texture = TextureLoader.getTexture(File("/res/$fileName.png"))
-        textures.add(texture.id)
-        return texture.id
+        val texture = Texture.loadTexture(fileName)
+        textures.add(texture.getID())
+        return texture.getID()
     }
 
     fun cleanUp() {
