@@ -35,7 +35,7 @@ class DisplayManager {
                 //for compatibility with Mac OS X
                 GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE)
             } else {
-                println("This is Adam's special (retarded) work laptop which has crappy Intel Graphics, turning off OpenGL flags")
+                println("This is taura's special (retarded) work laptop which has crappy Intel Graphics, turning off OpenGL flags")
             }
             rootWindowID = GLFW.glfwCreateWindow(WIDTH, HEIGHT, "Test", 0, 0)
 
