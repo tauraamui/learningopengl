@@ -97,11 +97,10 @@ public class Texture {
             val h = BufferUtils.createIntBuffer(1)
             val comp = BufferUtils.createIntBuffer(1)
 
-            stbi_set_flip_vertically_on_load(1)
+            stbi_set_flip_vertically_on_load(0)
             val image = stbi_load(path, w, h, comp, 4)
 
             if (image == null) throw RuntimeException("Failed to load texture from file: $path \n ${stbi_failure_reason()}")
-
             val width = w.get()
             val height = h.get()
 

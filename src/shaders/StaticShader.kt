@@ -20,5 +20,6 @@ class StaticShader : ShaderProgram {
 
     override fun bindAttributes() {
         bindAttribute(0, "position")
+        bindAttribute(1, "textureCoords")
     }
 }

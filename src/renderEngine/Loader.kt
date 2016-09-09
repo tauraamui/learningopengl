@@ -1,13 +1,13 @@
 package renderEngine
 
 import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray
+import models.RawModel
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import utils.Texture
-import java.io.File
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
@@ -21,31 +21,25 @@ class Loader {
     private var vbos = IntegerArray()
     private val textures = IntegerArray()
 
-    fun loadToVAO(positions: FloatArray, indices: IntArray) : RawModel {
+    fun loadToVAO(positions: FloatArray, textureCoords: FloatArray, indices: IntArray) : RawModel {
         val vaoID = createVAO()
         bindIndiciesBuffer(indices)
-        storeDataInAttributeList(0, positions)
+        storeDataInAttributeList(0, 3, positions)
+        storeDataInAttributeList(1, 2, textureCoords)
         unbindVAO()
         return RawModel(vaoID, indices.size)
     }
 
     fun loadTexture(fileName: String): Int {
-        val texture = Texture.loadTexture(fileName)
-        textures.add(texture.getID())
-        return texture.getID()
+        val custom_texture = Texture.loadTexture("res/image.png")
+        textures.add(custom_texture.getID())
+        return custom_texture.getID()
     }
 
     fun cleanUp() {
-        for (vao in vaos.toIntArray()) {
-            GL30.glDeleteVertexArrays(vao)
-        }
-        for (vbo in vbos.toIntArray()) {
-            GL15.glDeleteBuffers(vbo)
-        }
-
-        for (textureID in textures.toIntArray()) {
-            GL11.glDeleteTextures(textureID)
-        }
+        vaos.toIntArray().forEach { GL30.glDeleteVertexArrays(it) }
+        vbos.toIntArray().forEach { GL15.glDeleteBuffers(it) }
+        textures.toIntArray().forEach { GL11.glDeleteTextures(it) }
     }
 
     private fun createVAO(): Int {
@@ -55,13 +49,13 @@ class Loader {
         return vaoID
     }
 
-    private fun storeDataInAttributeList(attributeNumber: Int, data: FloatArray) {
+    private fun storeDataInAttributeList(attributeNumber: Int, coordinateSize: Int, data: FloatArray) {
         val vboID = GL15.glGenBuffers()
         vbos.add(vboID)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID)
         val floatBuffer = convertFloatArrayToBuffer(data)
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, floatBuffer, GL15.GL_STATIC_DRAW)
-        GL20.glVertexAttribPointer(attributeNumber, 3, GL11.GL_FLOAT, false, 0, 0)
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
     }
 
