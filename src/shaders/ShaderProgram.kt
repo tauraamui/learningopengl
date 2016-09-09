@@ -5,7 +5,10 @@ package co.uk.taurasystems.game.engine.utils
  */
 
 import com.sun.prism.GraphicsPipeline
+import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL20.*
+import utils.maths.Matrix4f
+import utils.maths.Vector3f
 import java.awt.font.TextAttribute
 import java.io.BufferedReader
 import java.io.File
@@ -22,6 +25,7 @@ abstract class ShaderProgram {
     constructor() {
         programID = glCreateProgram()
         if (programID == 0) throw Exception("Could not create shader program...")
+        getAllUniformLocations()
     }
 
     fun createVertexShader(shaderFile: File) {
@@ -97,5 +101,29 @@ abstract class ShaderProgram {
             }
             glDeleteProgram(programID)
         }
+    }
+
+    fun loadFloat(location: Int, value: Float) {
+        GL20.glUniform1f(location, value)
+    }
+
+    fun loadVector(location: Int, vector: Vector3f) {
+        GL20.glUniform3f(location, vector.x, vector.y, vector.z)
+    }
+
+    fun loadBoolean(location: Int, value: Float) {
+        var toLoad = 0f
+        if (value == 1.0f) toLoad = 1f
+        GL20.glUniform1f(location, toLoad)
+    }
+
+    fun loadMatrix(location: Int, matrix: Matrix4f) {
+
+    }
+
+    fun getAllUniformLocations() {}
+
+    fun getUniformLocation(uniformName: String): Int {
+        return GL20.glGetUniformLocation(programID, uniformName)
     }
 }
