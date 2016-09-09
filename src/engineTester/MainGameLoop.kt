@@ -16,7 +16,7 @@ import textures.ModelTexture
 
 fun main(args: Array<String>) {
 
-    DisplayManager.LWJGL3_createDisplay()
+    DisplayManager.createDisplay()
 
     val staticShader = StaticShader()
 

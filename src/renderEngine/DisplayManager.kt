@@ -5,11 +5,14 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.glfw.GLFWVidMode
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
+import java.net.Inet4Address
 
 /**
  * Created by tauraaamui on 22/08/2016.
  */
 class DisplayManager {
+
+    //PUT THIS IN THE JVM ARGS TO GET LWJGL DEBUG STREAM: -Dorg.lwjgl.util.Debug=true
 
     companion object {
 
@@ -19,18 +22,21 @@ class DisplayManager {
 
         var rootWindowID: Long = -1
 
-        fun LWJGL3_createDisplay() {
+        fun createDisplay() {
 
             GLFW.glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err))
 
             if (!GLFW.glfwInit()) throw IllegalStateException("Unable to initialize GLFW")
-
             GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE)
             GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3)
-            GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2)
-            GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
-            // for compatibility with Mac OS X
-            GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE)
+            if (Inet4Address.getLocalHost().hostName.toLowerCase() != "krweynb-alewis") {
+                GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2)
+                GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
+                //for compatibility with Mac OS X
+                GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE)
+            } else {
+                println("This is Adam's special (retarded) work laptop which has crappy Intel Graphics, turning off OpenGL flags")
+            }
             rootWindowID = GLFW.glfwCreateWindow(WIDTH, HEIGHT, "Test", 0, 0)
 
             if (rootWindowID == 0L) throw RuntimeException("Failed to create window")
@@ -43,25 +49,6 @@ class DisplayManager {
             GL.createCapabilities()
             GLFW.glfwShowWindow(rootWindowID)
         }
-
-        /*
-        fun createDisplay() {
-
-            val contextAttribs = ContextAttribs(3,2)
-            contextAttribs.withForwardCompatible(true)
-            contextAttribs.withProfileCore(true)
-
-            try {
-                Display.setDisplayMode(DisplayMode(WIDTH, HEIGHT))
-                Display.setTitle("Test")
-                Display.create(PixelFormat(), contextAttribs)
-            } catch (e: LWJGLException) {
-                e.printStackTrace()
-            }
-
-            GL11.glViewport(0, 0, WIDTH, HEIGHT)
-        }
-        */
 
         fun centreDisplay() {
             GLFW.glfwMakeContextCurrent(rootWindowID)
