@@ -4,16 +4,16 @@ package co.uk.taurasystems.game.engine.utils
  * Created by tauraaamui on 18/08/2016.
  */
 
-import com.sun.prism.GraphicsPipeline
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL20.*
-import utils.maths.Matrix4f
-import utils.maths.Vector3f
-import java.awt.font.TextAttribute
+import utils.maths.JOML.Matrix4f
+import utils.maths.JOML.Vector3f
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.nio.ByteBuffer
 
 abstract class ShaderProgram {
 
@@ -21,11 +21,12 @@ abstract class ShaderProgram {
     private  var vertexShaderID = 0
     private var fragmentShaderID = 0
 
+    private val matrixBuffer = BufferUtils.createFloatBuffer(16)
+
     @Throws(Exception::class)
     constructor() {
         programID = glCreateProgram()
         if (programID == 0) throw Exception("Could not create shader program...")
-        getAllUniformLocations()
     }
 
     fun createVertexShader(shaderFile: File) {
@@ -118,12 +119,13 @@ abstract class ShaderProgram {
     }
 
     fun loadMatrix(location: Int, matrix: Matrix4f) {
-
+        GL20.glUniformMatrix4fv(location, false, matrix.buffer)
     }
 
-    fun getAllUniformLocations() {}
+    abstract fun getAllUniformLocations()
 
     fun getUniformLocation(uniformName: String): Int {
-        return GL20.glGetUniformLocation(programID, uniformName)
+        val location = GL20.glGetUniformLocation(programID, uniformName)
+        return location
     }
 }

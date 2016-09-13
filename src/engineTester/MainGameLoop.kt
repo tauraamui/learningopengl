@@ -1,5 +1,6 @@
 package engineTester
 
+import entities.Entity
 import models.TexturedModel
 import org.lwjgl.glfw.GLFW
 import renderEngine.DisplayManager
@@ -7,6 +8,7 @@ import renderEngine.Loader
 import renderEngine.Renderer
 import shaders.StaticShader
 import textures.ModelTexture
+import utils.maths.JOML.Vector3f
 
 /**
  * Created by tauraaamui on 22/08/2016.
@@ -30,12 +32,14 @@ fun main(args: Array<String>) {
 
     val model = loader.loadToVAO(verticies, textureCoords, indices)
     val modelTexture = ModelTexture(loader.loadTexture("image"))
-    val texturedModel = TexturedModel(model, modelTexture)
+    val staticModel = TexturedModel(model, modelTexture)
+
+    val entity = Entity(staticModel, position = Vector3f(-1f,0f,0f), rotation = Vector3f(0f,0f,0f), scale = 1f)
 
     while (!GLFW.glfwWindowShouldClose(DisplayManager.rootWindowID)) {
         renderer.prepare()
         staticShader.bind()
-        renderer.render(texturedModel)
+        renderer.render(entity, staticShader)
         staticShader.unbind()
         DisplayManager.updateDisplay()
     }
