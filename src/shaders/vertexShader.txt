@@ -1,4 +1,4 @@
-#version 400
+#version 140
 
 in vec3 position;
 in vec2 textureCoordinates;
@@ -8,7 +8,7 @@ out vec2 pass_textureCoordinates;
 uniform mat4 transformationMatrix = mat4(vec4(1.0, 0.0, 0.0, 0.0),
                                          vec4(0.0, 1.0, 0.0, 0.0),
                                          vec4(0.0, 0.0, 1.0, 0.0),
-                                         vec4(0.0, 0.0, 0.0, 1.0));;
+                                         vec4(0.0, 0.0, 0.0, 1.0));
 
 void main(void) {
     gl_Position = transformationMatrix * vec4(position, 1.0);

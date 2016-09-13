@@ -40,13 +40,12 @@ abstract class ShaderProgram {
 
     private fun getShaderSource(file: File): String {
         try {
-            val shaderCode = StringBuilder()
+            var shaderCode = ""
             val bufferedReader = BufferedReader(FileReader(file))
-
-            bufferedReader.forEachLine {
-                shaderCode.append(it).append("\n")
-            }
+            val charArray = CharArray(8192)
+            bufferedReader.read(charArray)
             bufferedReader.close()
+            shaderCode = String(charArray)
             return shaderCode.toString()
         } catch (e: IOException) {
             e.printStackTrace()
