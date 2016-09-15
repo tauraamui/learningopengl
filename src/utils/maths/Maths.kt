@@ -13,7 +13,8 @@ class Maths {
     companion object {
         fun createTransformationMatrix(translation: Vector3f, rotation: Vector3f, scale: Float): Matrix4f {
             val matrix = Matrix4f()
-            matrix.translation(translation)
+            matrix.translate(translation)
+            //.rotation(Math.toRadians(90.0).toFloat(), rotation.x, rotation.y, rotation.z).scale(scale)
             //matrix.translate(translation).rotate(0f, Vector3f(1f,0f,0f)).rotate(0f, Vector3f(0f,1f,0f)).rotate(0f, Vector3f(0f,0f,1f)).scale(1f)
             /*
             println("${matrix.m00()}, ${matrix.m01()}, ${matrix.m02()}, ${matrix.m03()}")
